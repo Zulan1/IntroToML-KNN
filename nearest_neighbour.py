@@ -1,6 +1,7 @@
+import heapq
+from collections import Counter
 import numpy as np
 from scipy.spatial import distance
-import heapq
 
 
 def gensmallm(x_list: list, y_list: list, m: int):
@@ -36,7 +37,7 @@ def learnknn(k: int, x_train: np.array, y_train: np.array):
     :param y_train: numpy array of size (m, 1) containing the labels of the training sample
     :return: classifier data structure
     """
-    raise NotImplementedError()
+    return k, list(zip(x_train, y_train))
 
 def predictknn(classifier, x_test: np.array):
     """
@@ -45,10 +46,26 @@ def predictknn(classifier, x_test: np.array):
     :param x_test: numpy array of size (n, d) containing test examples that will be classified
     :return: numpy array of size (n, 1) classifying the examples in x_test
     """
-    raise NotImplementedError()
+    k = classifier[0]
+    y_pred = []
+    test_data = classifier[1]
+    for x in x_test:
+        h = []
+        for s in test_data:
+            d = distance.euclidean(x, s[0])
+            if len(h) < k:
+                heapq.heappush(h, (1 / d, s[1]))
+            elif (1 / d) > h[0][0]:
+                heapq.heappop(h)
+                heapq.heappush(h, (1 / d, s[1]))
+        most_common_label = Counter(y[1] for y in h).most_common(1)[0][0]
+        y_pred.append(most_common_label)
+    y_pred = np.array(y_pred).reshape(-1, 1)
+    return y_pred
 
 
 def simple_test():
+    """test the functions with a simple example"""
     data = np.load('mnist_all.npz')
 
     train0 = data['train0']
@@ -63,12 +80,18 @@ def simple_test():
 
     x_train, y_train = gensmallm([train0, train1, train2, train3], [0, 1, 2, 3], 100)
 
-    x_test, y_test = gensmallm([test0, test1, test2, test3], [0, 1, 2, 3], 50)
+    x_test, y_test = gensmallm([test0, test1, test2, test3], [0, 1, 2, 3], 500)
 
-    classifer = learnknn(5, x_train, y_train)
+    classifer = learnknn(1, x_train, y_train)
 
+    count = 0
     preds = predictknn(classifer, x_test)
-
+    for y_p, y_r in zip(preds, y_test):
+        print(f"expected: {y_r}, received: {y_p[0]}")
+        if y_p[0] != y_r:
+            count += 1
+    print(preds.reshape(-1, 1) - y_test)
+    print(count)
     # tests to make sure the output is of the intended class and shape
     assert isinstance(preds, np.ndarray), "The output of the function predictknn should be a numpy array"
     assert preds.shape[0] == x_test.shape[0] and preds.shape[
