@@ -60,7 +60,7 @@ def predictknn(classifier, x_test: np.array):
                 heapq.heappush(h, (1 / d, s[1]))
         most_common_label = Counter(y[1] for y in h).most_common(1)[0][0]
         y_pred.append(most_common_label)
-    y_pred = np.array(y_pred).reshape(-1, 1)
+    y_pred = np.vstack(y_pred)
     return y_pred
 
 
