@@ -5,7 +5,7 @@ import time
 
 ROUND_DIGITS = 5
 
-def test_sample_size(sample_size: int = 200, k: int = 1):
+def test_input_size(sample_size: int = 200, k: int = 1):
     data = np.load('mnist_all.npz')
 
     labels = [2, 3, 5, 6]
@@ -24,13 +24,14 @@ def test_sample_size(sample_size: int = 200, k: int = 1):
     return error
 
 def analyze_sample_sizes():
+    """tests the knn algorithm for different sample sizes"""
     sample_sizes = [1] + list(range(10, 101, 10))
     test_rep = 10
 
     averages = []
     errors = []
     for size in sample_sizes:
-        sample_results = [test_sample_size(size) for _ in range(test_rep)]
+        sample_results = [test_input_size(size) for _ in range(test_rep)]
         low = round(min(sample_results), ROUND_DIGITS)
         high = round(max(sample_results), ROUND_DIGITS)
         average = round(sum(sample_results) / test_rep, ROUND_DIGITS)
@@ -45,14 +46,15 @@ def analyze_sample_sizes():
     plot_error_bar_graph(sample_sizes, averages, yerr, title, x_label, errors_below, errors_above)
 
 def analyze_k_values():
+    """tests the knn algorithm for different k"""
     sample_size = 200
     k_values = list(range(1, 11))
-    test_rep = 1000
+    test_rep = 10
 
     averages = []
     errors = []
     for k in k_values:
-        sample_results = [test_sample_size(sample_size, k) for _ in range(test_rep)]
+        sample_results = [test_input_size(sample_size, k) for _ in range(test_rep)]
         low = round(min(sample_results), ROUND_DIGITS)
         high = round(max(sample_results), ROUND_DIGITS)
         average = round(sum(sample_results) / test_rep, ROUND_DIGITS)
@@ -67,6 +69,8 @@ def analyze_k_values():
     plot_error_bar_graph(k_values, averages, yerr, title, x_label, errors_below, errors_above)
 
 def plot_error_bar_graph(x_values, averages, yerr, title, x_label, errors_below, errors_above):
+    """plots error bar graph with the given parameters"""
+    global end # pylint: disable=w0601
     # Plotting the graph with error bars
     plt.figure(figsize=(10, 6))
     plt.errorbar(x_values, averages,
@@ -91,15 +95,11 @@ def plot_error_bar_graph(x_values, averages, yerr, title, x_label, errors_below,
     plt.ylabel('Error', fontsize=16)
     plt.xticks(x_values, fontsize=12)
     plt.grid(True)
+    end = time.time()
     plt.show(block=True)
 
 if __name__ == '__main__':
     # analyze_sample_sizes()
     start = time.time()
-    print(f'start time {start}')
     analyze_k_values()
-    end = time.time()
-    print(f'end time {end}')
-    time_to_process = end - start
-    print(f'time_to_process in seconds {time_to_process}')
-    
+    print(f'time_to_process in seconds {end - start}')
