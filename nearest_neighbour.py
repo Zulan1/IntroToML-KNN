@@ -105,6 +105,5 @@ def simple_test():
 
 
 if __name__ == '__main__':
-
     # before submitting, make sure that the function simple_test runs without errors
     simple_test()

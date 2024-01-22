@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from nearest_neighbour import predictknn, learnknn, gensmallm
+import time
 
 ROUND_DIGITS = 5
 
@@ -92,6 +93,13 @@ def plot_error_bar_graph(x_values, averages, yerr, title, x_label, errors_below,
     plt.grid(True)
     plt.show(block=True)
 
-# analyze_sample_sizes()
-analyze_k_values()
+if __name__ == '__main__':
+    # analyze_sample_sizes()
+    start = time.time()
+    print(f'start time {start}')
+    analyze_k_values()
+    end = time.time()
+    print(f'end time {end}')
+    time_to_process = end - start
+    print(f'time_to_process in seconds {time_to_process}')
     
