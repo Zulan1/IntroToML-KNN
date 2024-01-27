@@ -1,8 +1,7 @@
-import heapq
-from collections import Counter
 import numpy as np
 from scipy.spatial import distance
-
+import heapq
+from collections import Counter
 
 def gensmallm(x_list: list, y_list: list, m: int):
     """
@@ -63,9 +62,7 @@ def predictknn(classifier, x_test: np.array):
     y_pred = np.vstack(y_pred)
     return y_pred
 
-
 def simple_test():
-    """test the functions with a simple example"""
     data = np.load('mnist_all.npz')
 
     train0 = data['train0']
@@ -80,18 +77,12 @@ def simple_test():
 
     x_train, y_train = gensmallm([train0, train1, train2, train3], [0, 1, 2, 3], 100)
 
-    x_test, y_test = gensmallm([test0, test1, test2, test3], [0, 1, 2, 3], 500)
+    x_test, y_test = gensmallm([test0, test1, test2, test3], [0, 1, 2, 3], 50)
 
-    classifer = learnknn(1, x_train, y_train)
+    classifer = learnknn(5, x_train, y_train)
 
-    count = 0
     preds = predictknn(classifer, x_test)
-    for y_p, y_r in zip(preds, y_test):
-        print(f"expected: {y_r}, received: {y_p[0]}")
-        if y_p[0] != y_r:
-            count += 1
-    print(preds.reshape(-1, 1) - y_test)
-    print(count)
+
     # tests to make sure the output is of the intended class and shape
     assert isinstance(preds, np.ndarray), "The output of the function predictknn should be a numpy array"
     assert preds.shape[0] == x_test.shape[0] and preds.shape[
@@ -105,5 +96,6 @@ def simple_test():
 
 
 if __name__ == '__main__':
+
     # before submitting, make sure that the function simple_test runs without errors
     simple_test()

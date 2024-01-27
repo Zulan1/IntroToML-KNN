@@ -6,6 +6,7 @@ import time
 ROUND_DIGITS = 5
 
 def test_input_size(sample_size: int = 200, k: int = 1):
+    """tests the knn algorithm for a given sample size and k value"""
     data = np.load('mnist_all.npz')
 
     labels = [2, 3, 5, 6]
@@ -14,7 +15,7 @@ def test_input_size(sample_size: int = 200, k: int = 1):
     test_set = [data[f'test{i}'] for i in labels]
 
     x_train, y_train = gensmallm(train_set, labels, sample_size)
-    x_test, y_test = gensmallm(test_set, labels, 50)
+    x_test, y_test = gensmallm(test_set, labels, 100)
 
     classifer = learnknn(k, x_train, y_train)
     y_preds = predictknn(classifer, x_test)
@@ -48,7 +49,7 @@ def analyze_sample_sizes():
 def analyze_k_values():
     """tests the knn algorithm for different k"""
     sample_size = 200
-    k_values = list(range(1, 11))
+    k_values = list(range(1, 12))
     test_rep = 10
 
     averages = []
@@ -67,6 +68,7 @@ def analyze_k_values():
     title = 'Error Range vs. K Value'
     x_label = 'K Value'
     plot_error_bar_graph(k_values, averages, yerr, title, x_label, errors_below, errors_above)
+    
 
 def plot_error_bar_graph(x_values, averages, yerr, title, x_label, errors_below, errors_above):
     """plots error bar graph with the given parameters"""
